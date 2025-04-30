@@ -34,6 +34,10 @@ jobs:
             curl -fsSL https://deb.nodesource.com/setup_18.x | bash -
             apt-get install -y nodejs
           fi
+          npm install -g pm2
           npm install
           npm run build
-          pm2 restart nextjs-app || pm2 start npm --name "nextjs-app" -- start
+          pm2 delete nextjs-app || true
+          pm2 start npm --name "nextjs-app" -- start
+          pm2 save
+          pm2 startup
