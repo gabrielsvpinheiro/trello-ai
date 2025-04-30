@@ -24,7 +24,7 @@ export default function Home() {
             Save and see your changes instantly.
           </li>
           <li className="tracking-[-.01em]">
-            My Trello App
+            My Trello AI Application
           </li>
         </ol>
 
