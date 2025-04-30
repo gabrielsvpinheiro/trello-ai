@@ -1,4 +1,4 @@
-name: Deploy to VPS via SSH
+name: Deploy to VPS
 
 on:
   push:
@@ -22,15 +22,18 @@ jobs:
         source: "."
         target: "/root/nextjs-app"
 
-    - name: Run Docker on VPS
+    - name: Setup Node.js and install dependencies
       uses: appleboy/ssh-action@master
       with:
         host: ${{ secrets.VPS_HOST }}
         username: ${{ secrets.VPS_USER }}
         key: ${{ secrets.VPS_SSH_KEY }}
         script: |
-          cd /root/nextjs-app  
-          docker stop nextjs-app || true
-          docker rm nextjs-app || true
-          docker build -t nextjs-app .
-          docker run -d --name nextjs-app -p 3001:3000 nextjs-app
+          cd /root/nextjs-app
+          if ! command -v node &> /dev/null; then
+            curl -fsSL https://deb.nodesource.com/setup_18.x | bash -
+            apt-get install -y nodejs
+          fi
+          npm install
+          npm run build
+          pm2 restart nextjs-app || pm2 start npm --name "nextjs-app" -- start
