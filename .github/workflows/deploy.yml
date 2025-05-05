@@ -36,6 +36,12 @@ jobs:
           fi
           npm install -g pm2
           npm install
+          
+          cat > .env << EOF
+          NEXT_PUBLIC_TRELLO_API_KEY=${{ secrets.NEXT_PUBLIC_TRELLO_API_KEY }}
+          NEXT_PUBLIC_TRELLO_API_TOKEN=${{ secrets.NEXT_PUBLIC_TRELLO_API_TOKEN }}
+          EOF
+          
           npm run build
           pm2 delete nextjs-app || true
           pm2 start npm --name "nextjs-app" -- start
