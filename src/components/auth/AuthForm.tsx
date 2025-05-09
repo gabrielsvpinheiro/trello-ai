@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import { TextInput } from '../common/TextInput'
 
 interface AuthFormProps {
   type: 'login' | 'signup'
@@ -35,9 +36,7 @@ export function AuthForm({ type, onSubmit }: AuthFormProps) {
   return (
     <div className="max-w-md w-full space-y-8">
       <div>
-        <h2 className="mt-6 text-center text-3xl font-light text-gray-50">
-          {title}
-        </h2>
+        <h2 className="mt-6 text-center text-3xl font-light text-gray-50">{title}</h2>
         <p className="mt-2 text-center text-sm text-gray-600">
           Or{' '}
           <a href={alternativeLink} className="font-light text-gray-300 hover:text-gray-400">
@@ -47,56 +46,47 @@ export function AuthForm({ type, onSubmit }: AuthFormProps) {
       </div>
       <form className="mt-8 space-y-6 p-8 rounded-lg shadow" onSubmit={handleSubmit}>
         <div className="rounded-md shadow-sm -space-y-px">
-          <div>
-            <label htmlFor="email" className="sr-only">
-              Email address
-            </label>
-            <input
-              id="email"
-              name="email"
-              type="email"
-              required
-              className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-600 placeholder-gray-500 text-gray-300 rounded-t-md focus:outline-none focus:ring-gray-200 focus:border-gray-300 focus:z-10 sm:text-sm"
-              placeholder="Email address"
-            />
-          </div>
+          <TextInput
+            id="email"
+            name="email"
+            type="email"
+            placeholder="Email address"
+            required
+            className="rounded-t-md"
+            label="Email address"
+          />
           <div className="pt-2">
-            <label htmlFor="password" className="sr-only">
-              Password
-            </label>
-            <input
+            <TextInput
               id="password"
               name="password"
               type="password"
-              required
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-600 placeholder-gray-500 text-gray-300 rounded-b-md focus:outline-none focus:ring-gray-200 focus:border-gray-300 focus:z-10 sm:text-sm"
               placeholder="Password"
+              required
+              className="rounded-b-md"
+              label="Password"
             />
           </div>
 
           {!isLogin && (
             <div className="pt-5">
-              <input
+              <TextInput
                 id="confirm-password"
                 name="confirm-password"
                 type="password"
-                required
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
-                className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-600 placeholder-gray-500 text-gray-300 rounded-b-md rounded-t-md focus:outline-none focus:ring-gray-200 focus:border-gray-300 focus:z-10 sm:text-sm"
                 placeholder="Confirm Password"
+                required
+                className="rounded-md"
+                label="Confirm Password"
               />
             </div>
           )}
         </div>
 
-        {error && (
-          <div className="text-red-500 text-sm text-center">
-            {error}
-          </div>
-        )}
+        {error && <div className="text-red-500 text-sm text-center">{error}</div>}
 
         <div>
           <button
