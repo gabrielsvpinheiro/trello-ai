@@ -1,11 +1,14 @@
-import { TaskCard } from "./TaskCard";
+'use client';
+
+import { Task } from "@/types/task";
+import { TaskCard } from './TaskCard';
 
 interface TaskColumnProps {
   title: string;
-  tasks: { id: number; title: string; content: string }[];
+  tasks: Task[];
   onDragOver: (e: React.DragEvent<HTMLDivElement>) => void;
   onDrop: (e: React.DragEvent<HTMLDivElement>, target: string) => void;
-  onDragStart: (e: React.DragEvent<HTMLDivElement>, task: any, source: string) => void;
+  onDragStart: (e: React.DragEvent<HTMLDivElement>, task: Task, source: string) => void;
   source: string;
 }
 

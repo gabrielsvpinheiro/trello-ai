@@ -1,8 +1,10 @@
 'use client';
 
+import { Task } from "@/types/task";
+
 interface TaskCardProps {
-  task: { id: number; title: string; content: string };
-  onDragStart: (e: React.DragEvent<HTMLDivElement>, task: any, source: string) => void;
+  task: Task;
+  onDragStart: (e: React.DragEvent<HTMLDivElement>, task: Task, source: string) => void;
   source: string;
 }
 
