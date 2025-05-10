@@ -14,6 +14,7 @@ export default function LogOut() {
 
       if (error) {
         console.error('Error logging out:', error.message)
+        return
       }
 
       console.log('Logged out successfully')
