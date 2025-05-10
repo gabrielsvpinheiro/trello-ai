@@ -18,14 +18,14 @@ export default function Home() {
     { id: 5, title: "Task 5", content: "Task 5 content" },
   ]);
 
-  const handleDragStart = (e: React.DragEvent<HTMLDivElement>, task: any, source: string) => {
+  const handleDragStart = (e: React.DragEvent<HTMLDivElement>, task: Task, source: string) => {
     e.dataTransfer.setData("task", JSON.stringify(task));
     e.dataTransfer.setData("source", source);
   };
 
   const handleDrop = (e: React.DragEvent<HTMLDivElement>, target: string) => {
     e.preventDefault();
-    const task = JSON.parse(e.dataTransfer.getData("task"));
+    const task = JSON.parse(e.dataTransfer.getData("task")) as Task; // Asserção de tipo
     const source = e.dataTransfer.getData("source");
 
     if (source === "backlog") setBacklog((prev) => prev.filter((t) => t.id !== task.id));
