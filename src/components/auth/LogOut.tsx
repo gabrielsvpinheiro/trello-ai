@@ -11,12 +11,13 @@ export default function LogOut() {
   async function logOut() {
     try {
       const { error } = await supabase.auth.signOut()
+
       if (error) {
         console.error('Error logging out:', error.message)
-      } else {
-        console.log('Logged out successfully')
-        router.push('/login')	
       }
+
+      console.log('Logged out successfully')
+      router.push('/login')	
     } catch (err) {
       console.error('Unexpected error during logout:', err)
     }
