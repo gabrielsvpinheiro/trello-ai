@@ -40,6 +40,12 @@ export function TaskBoard() {
     e.preventDefault();
   };
 
+  const handleDeleteTask = (taskId: number) => {
+    setBacklog((prev) => prev.filter((task) => task.id !== taskId));
+    setInProgress((prev) => prev.filter((task) => task.id !== taskId));
+    setDone((prev) => prev.filter((task) => task.id !== taskId));
+  };
+
   return (
     <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 w-full max-w-6xl">
       <TaskColumn
@@ -49,6 +55,7 @@ export function TaskBoard() {
         onDrop={handleDrop}
         onDragStart={handleDragStart}
         source="backlog"
+        handleDeleteTask={handleDeleteTask}
       />
       <TaskColumn
         title="In Progress"
@@ -57,6 +64,7 @@ export function TaskBoard() {
         onDrop={handleDrop}
         onDragStart={handleDragStart}
         source="inProgress"
+        handleDeleteTask={handleDeleteTask}
       />
       <TaskColumn
         title="Done"
@@ -65,6 +73,7 @@ export function TaskBoard() {
         onDrop={handleDrop}
         onDragStart={handleDragStart}
         source="done"
+        handleDeleteTask={handleDeleteTask}
       />
     </div>
   );
