@@ -4,11 +4,8 @@ export default function RemoveIcon() {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
-      x="0px"
-      y="0px"
-      width="20"
-      height="15"
       viewBox="0 0 256 256"
+      className="w-4 h-6 transition-opacity duration-200 hover:opacity-80 cursor-pointer"
     >
       <g
         fill="#ffffff"
@@ -33,4 +30,3 @@ export default function RemoveIcon() {
     </svg>
   );
 }
-

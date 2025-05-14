@@ -19,7 +19,7 @@ export function TaskCard({ task, onDragStart, source, handleDeleteTask }: TaskCa
     >
       <div className="flex items-center justify-between mb-2">
         <h3 className="text-white text-md">{task.title}</h3>
-        <button onClick={() => handleDeleteTask(task.id)} className="cursor-pointer">
+        <button onClick={() => handleDeleteTask(task.id)}>
           <RemoveIcon />
         </button>
       </div>
