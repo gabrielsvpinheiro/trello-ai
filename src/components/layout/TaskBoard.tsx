@@ -79,6 +79,24 @@ export function TaskBoard() {
     setDone((prev) => prev.filter((task) => task.id !== taskId));
   };
 
+    const handleCreateTask = async (title: string, content: string) => {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) return;
+    const { data, error } = await supabase
+      .from('tasks')
+      .insert({
+        title,
+        content,
+        status: 'backlog',
+        user_id: user.id,
+      })
+      .select()
+      .single();
+    if (!error && data) {
+      setBacklog((prev) => [data, ...prev]);
+    }
+  };
+
   if (loading) {
     return <div className="text-white text-center">Loading tasks...</div>;
   }
@@ -93,6 +111,7 @@ export function TaskBoard() {
         onDragStart={handleDragStart}
         source="backlog"
         handleDeleteTask={handleDeleteTask}
+        onCreateTask={handleCreateTask}
       />
       <TaskColumn
         title="In Progress"
