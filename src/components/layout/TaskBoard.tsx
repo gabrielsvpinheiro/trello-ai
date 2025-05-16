@@ -4,6 +4,7 @@ import { useEffect, useState, useCallback } from "react";
 import { TaskColumn } from "./TaskColumn";
 import { Task } from "@/types/task";
 import { supabase } from "@/api/client";
+import Loading from "../common/Loading";
 
 export function TaskBoard() {
   const [backlog, setBacklog] = useState<Task[]>([]);
@@ -98,7 +99,7 @@ export function TaskBoard() {
   };
 
   if (loading) {
-    return <div className="text-white text-center">Loading tasks...</div>;
+    return <Loading />;
   }
 
   return (
