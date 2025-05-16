@@ -116,6 +116,7 @@ The project uses Supabase authentication. Each user has access only to their own
 * ❌ Task deletion
 * 🔐 Each user only sees their own tasks
 * 📱 Responsive and modern interface
+* 🤖 **In development**: AI integration  
 
 ---
 
