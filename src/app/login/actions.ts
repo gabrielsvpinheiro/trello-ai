@@ -13,7 +13,10 @@ export async function login(email: string, password: string) {
   })
 
   if (error) {
-    throw error
+    if (error.message.includes('Invalid login credentials')) {
+      throw new Error('Incorrect email or password')
+    }
+    throw new Error('An error occurred while logging in. Please try again.')
   }
 
   revalidatePath('/', 'layout')

@@ -3,15 +3,51 @@
 import { useState } from 'react'
 import { TextInput } from '../common/TextInput'
 
+const PASSWORD_MIN_LENGTH = 6
+const PASSWORD_MAX_LENGTH = 20
+const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+
 interface AuthFormProps {
   type: 'login' | 'signup'
   onSubmit: (email: string, password: string) => Promise<void>
+}
+
+interface ValidationError {
+  isValid: boolean
+  message: string
+}
+
+const validateEmail = (email: string): ValidationError => {
+  if (!email) {
+    return { isValid: false, message: 'Email is required' }
+  }
+  if (!EMAIL_REGEX.test(email)) {
+    return { isValid: false, message: 'Invalid email format' }
+  }
+  return { isValid: true, message: '' }
+}
+
+const validatePassword = (password: string, confirmPassword?: string): ValidationError => {
+  if (!password) {
+    return { isValid: false, message: 'Password is required' }
+  }
+  if (password.length < PASSWORD_MIN_LENGTH) {
+    return { isValid: false, message: `Password must be at least ${PASSWORD_MIN_LENGTH} characters` }
+  }
+  if (password.length > PASSWORD_MAX_LENGTH) {
+    return { isValid: false, message: `Password must be at most ${PASSWORD_MAX_LENGTH} characters` }
+  }
+  if (confirmPassword && password !== confirmPassword) {
+    return { isValid: false, message: 'Passwords do not match' }
+  }
+  return { isValid: true, message: '' }
 }
 
 export function AuthForm({ type, onSubmit }: AuthFormProps) {
   const [password, setPassword] = useState('')
   const [confirmPassword, setConfirmPassword] = useState('')
   const [error, setError] = useState('')
+  const [isLoading, setIsLoading] = useState(false)
 
   const isLogin = type === 'login'
   const title = isLogin ? 'Sign in to your account' : 'Create a new account'
@@ -22,25 +58,30 @@ export function AuthForm({ type, onSubmit }: AuthFormProps) {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     setError('')
+    setIsLoading(true)
 
-    if (!isLogin && password !== confirmPassword) {
-      setError('Passwords do not match')
-      return
+    try {
+      const formData = new FormData(e.currentTarget)
+      const email = formData.get('email') as string
+
+      const emailValidation = validateEmail(email)
+      if (!emailValidation.isValid) {
+        setError(emailValidation.message)
+        return
+      }
+
+      const passwordValidation = validatePassword(password, isLogin ? undefined : confirmPassword)
+      if (!passwordValidation.isValid) {
+        setError(passwordValidation.message)
+        return
+      }
+
+      await onSubmit(email, password)
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'An error occurred. Please try again.')
+    } finally {
+      setIsLoading(false)
     }
-
-    if (!isLogin && password.length < 6) {
-      setError('Password must be at least 6 characters long')
-      return
-    }
-
-    if (!isLogin && password.length > 20) {
-      setError('Password must be at most 20 characters long')
-      return
-    }
-
-    const formData = new FormData(e.currentTarget)
-    const email = formData.get('email') as string
-    await onSubmit(email, password)
   }
 
   return (
@@ -96,14 +137,21 @@ export function AuthForm({ type, onSubmit }: AuthFormProps) {
           )}
         </div>
 
-        {error && <div className="text-red-500 text-sm text-center">{error}</div>}
+        {error && (
+          <div className="text-red-500 text-sm text-center">
+            {error}
+          </div>
+        )}
 
         <div>
           <button
             type="submit"
-            className="cursor-pointer group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-light rounded-md text-white bg-gray-700 hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-800"
+            disabled={isLoading}
+            className={`cursor-pointer group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-light rounded-md text-white bg-gray-700 hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-800 ${
+              isLoading ? 'opacity-50 cursor-not-allowed' : ''
+            }`}
           >
-            {buttonText}
+            {isLoading ? 'Loading...' : buttonText}
           </button>
         </div>
       </form>
