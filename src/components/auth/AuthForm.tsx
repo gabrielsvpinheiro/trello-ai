@@ -28,6 +28,16 @@ export function AuthForm({ type, onSubmit }: AuthFormProps) {
       return
     }
 
+    if (!isLogin && password.length < 6) {
+      setError('Password must be at least 6 characters long')
+      return
+    }
+
+    if (!isLogin && password.length > 20) {
+      setError('Password must be at most 20 characters long')
+      return
+    }
+
     const formData = new FormData(e.currentTarget)
     const email = formData.get('email') as string
     await onSubmit(email, password)
