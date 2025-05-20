@@ -44,10 +44,10 @@ const validatePassword = (password: string, confirmPassword?: string): Validatio
 }
 
 export function AuthForm({ type, onSubmit }: AuthFormProps) {
-  const [password, setPassword] = useState('')
-  const [confirmPassword, setConfirmPassword] = useState('')
-  const [error, setError] = useState('')
-  const [isLoading, setIsLoading] = useState(false)
+  const [password, setPassword] = useState<string>('')
+  const [confirmPassword, setConfirmPassword] = useState<string>('')
+  const [error, setError] = useState<string>('')
+  const [isLoading, setIsLoading] = useState<boolean>(false)
 
   const isLogin = type === 'login'
   const title = isLogin ? 'Sign in to your account' : 'Create a new account'
