@@ -86,9 +86,11 @@ Create a `.env.local` file in the root of the project with the following:
 ```
 NEXT_PUBLIC_SUPABASE_URL=https://<your-instance>.supabase.co
 NEXT_PUBLIC_SUPABASE_ANON_KEY=<your-anon-key>
+OPENAI_API_KEY=<your-openai-api-key>
 ```
 
 You can find these values in the Supabase dashboard under **Project Settings > API**.
+For the OpenAI API key, you can get it from [OpenAI Platform](https://platform.openai.com/api-keys).
 
 ---
 
@@ -113,10 +115,12 @@ The project uses Supabase authentication. Each user has access only to their own
 * ✅ User login and registration
 * 📝 Task creation
 * 🔄 Move tasks between columns using drag and drop
+* ✏️ Edit task
 * ❌ Task deletion
 * 🔐 Each user only sees their own tasks
 * 📱 Responsive and modern interface
-* 🤖 **In development**: AI integration  
+* 🤖 AI integration
+* 📱 Mobile app support
 
 ---
 
