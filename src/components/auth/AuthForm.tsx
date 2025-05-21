@@ -2,96 +2,69 @@
 
 import { useState } from 'react'
 import { TextInput } from '../common/TextInput'
-
-const PASSWORD_MIN_LENGTH = 6
-const PASSWORD_MAX_LENGTH = 20
-const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+import { Button } from '../common/Button'
+import { ConfirmPasswordInput } from './ConfirmPasswordInput'
+import { validateEmail, validatePassword } from '@/utils/validation'
+import { AUTH_TEXTS } from '@/utils/auth'
 
 interface AuthFormProps {
   type: 'login' | 'signup'
   onSubmit: (email: string, password: string) => Promise<void>
 }
 
-interface ValidationError {
-  isValid: boolean
-  message: string
-}
-
-const validateEmail = (email: string): ValidationError => {
-  if (!email) {
-    return { isValid: false, message: 'Email is required' }
-  }
-  if (!EMAIL_REGEX.test(email)) {
-    return { isValid: false, message: 'Invalid email format' }
-  }
-  return { isValid: true, message: '' }
-}
-
-const validatePassword = (password: string, confirmPassword?: string): ValidationError => {
-  if (!password) {
-    return { isValid: false, message: 'Password is required' }
-  }
-  if (password.length < PASSWORD_MIN_LENGTH) {
-    return { isValid: false, message: `Password must be at least ${PASSWORD_MIN_LENGTH} characters` }
-  }
-  if (password.length > PASSWORD_MAX_LENGTH) {
-    return { isValid: false, message: `Password must be at most ${PASSWORD_MAX_LENGTH} characters` }
-  }
-  if (confirmPassword && password !== confirmPassword) {
-    return { isValid: false, message: 'Passwords do not match' }
-  }
-  return { isValid: true, message: '' }
-}
-
 export function AuthForm({ type, onSubmit }: AuthFormProps) {
-  const [password, setPassword] = useState<string>('')
-  const [confirmPassword, setConfirmPassword] = useState<string>('')
-  const [error, setError] = useState<string>('')
-  const [isLoading, setIsLoading] = useState<boolean>(false)
+  const [formData, setFormData] = useState({
+    password: '',
+    confirmPassword: '',
+    error: '',
+    isLoading: false
+  })
 
   const isLogin = type === 'login'
-  const title = isLogin ? 'Sign in to your account' : 'Create a new account'
-  const buttonText = isLogin ? 'Sign in' : 'Create account'
-  const alternativeText = isLogin ? 'create a new account' : 'sign in to your account'
-  const alternativeLink = isLogin ? '/signup' : '/login'
+  const texts = AUTH_TEXTS[type]
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
-    setError('')
-    setIsLoading(true)
+    setFormData(prev => ({ ...prev, error: '', isLoading: true }))
 
     try {
-      const formData = new FormData(e.currentTarget)
-      const email = formData.get('email') as string
+      const form = new FormData(e.currentTarget)
+      const email = form.get('email') as string
 
       const emailValidation = validateEmail(email)
       if (!emailValidation.isValid) {
-        setError(emailValidation.message)
+        setFormData(prev => ({ ...prev, error: emailValidation.message }))
         return
       }
 
-      const passwordValidation = validatePassword(password, isLogin ? undefined : confirmPassword)
+      const passwordValidation = validatePassword(
+        formData.password,
+        isLogin ? undefined : formData.confirmPassword
+      )
       if (!passwordValidation.isValid) {
-        setError(passwordValidation.message)
+        setFormData(prev => ({ ...prev, error: passwordValidation.message }))
         return
       }
 
-      await onSubmit(email, password)
+      await onSubmit(email, formData.password)
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'An error occurred. Please try again.')
+      setFormData(prev => ({
+        ...prev,
+        error: err instanceof Error ? err.message : 'An error occurred. Please try again.'
+      }))
     } finally {
-      setIsLoading(false)
+      setFormData(prev => ({ ...prev, isLoading: false }))
     }
   }
 
   return (
     <div className="max-w-md w-full space-y-8">
       <div>
-        <h2 className="mt-6 text-center text-3xl font-light text-gray-50">{title}</h2>
+        <h2 className="mt-6 text-center text-3xl font-light text-gray-50">{texts.title}</h2>
         <p className="mt-2 text-center text-sm text-gray-600">
           Or{' '}
-          <a href={alternativeLink} className="font-light text-gray-300 hover:text-gray-400">
-            {alternativeText}
+          <a href={texts.alternativeLink} className="font-light text-gray-300 hover:text-gray-400">
+            {texts.alternativeText}
           </a>
         </p>
       </div>
@@ -111,8 +84,8 @@ export function AuthForm({ type, onSubmit }: AuthFormProps) {
               id="password"
               name="password"
               type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
+              value={formData.password}
+              onChange={(e) => setFormData(prev => ({ ...prev, password: e.target.value }))}
               placeholder="Password"
               required
               className="rounded-b-md"
@@ -121,38 +94,28 @@ export function AuthForm({ type, onSubmit }: AuthFormProps) {
           </div>
 
           {!isLogin && (
-            <div className="pt-5">
-              <TextInput
-                id="confirm-password"
-                name="confirm-password"
-                type="password"
-                value={confirmPassword}
-                onChange={(e) => setConfirmPassword(e.target.value)}
-                placeholder="Confirm Password"
-                required
-                className="rounded-md"
-                label="Confirm Password"
-              />
-            </div>
+            <ConfirmPasswordInput
+              value={formData.confirmPassword}
+              onChange={(value) => setFormData(prev => ({ ...prev, confirmPassword: value }))}
+            />
           )}
         </div>
 
-        {error && (
+        {formData.error && (
           <div className="text-red-500 text-sm text-center">
-            {error}
+            {formData.error}
           </div>
         )}
 
         <div>
-          <button
+          <Button
             type="submit"
-            disabled={isLoading}
+            disabled={formData.isLoading}
+            text={formData.isLoading ? 'Loading...' : texts.buttonText}
             className={`cursor-pointer group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-light rounded-md text-white bg-gray-700 hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-800 ${
-              isLoading ? 'opacity-50 cursor-not-allowed' : ''
+              formData.isLoading ? 'opacity-50 cursor-not-allowed' : ''
             }`}
-          >
-            {isLoading ? 'Loading...' : buttonText}
-          </button>
+          />
         </div>
       </form>
     </div>
