@@ -4,7 +4,7 @@ import { TaskColumn } from "./TaskColumn";
 import { Task } from "@/types/task";
 import Loading from "../common/Loading";
 import { useTaskBoard } from "@/hooks/useTaskBoard";
-import { AITaskInput } from "../common/AITaskInput";
+import { AITaskInput } from "@/components/layout/AITaskInput";
 
 export function TaskBoard() {
   const {
