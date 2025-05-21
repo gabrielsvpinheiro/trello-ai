@@ -6,6 +6,7 @@ import { Button } from '../common/Button'
 import { ConfirmPasswordInput } from './ConfirmPasswordInput'
 import { validateEmail, validatePassword } from '@/utils/validation'
 import { AUTH_TEXTS } from '@/utils/auth'
+import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
 
 interface AuthFormProps {
   type: 'login' | 'signup'
@@ -17,15 +18,17 @@ export function AuthForm({ type, onSubmit }: AuthFormProps) {
     password: '',
     confirmPassword: '',
     error: '',
+    success: '',
     isLoading: false
   })
+  const supabase = createClientComponentClient()
 
   const isLogin = type === 'login'
   const texts = AUTH_TEXTS[type]
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
-    setFormData(prev => ({ ...prev, error: '', isLoading: true }))
+    setFormData(prev => ({ ...prev, error: '', success: '', isLoading: true }))
 
     try {
       const form = new FormData(e.currentTarget)
@@ -46,6 +49,27 @@ export function AuthForm({ type, onSubmit }: AuthFormProps) {
         return
       }
 
+      if (!isLogin) {
+        const { error } = await supabase.auth.signUp({
+          email,
+          password: formData.password,
+          options: {
+            emailRedirectTo: `${window.location.origin}/auth/callback`
+          }
+        })
+
+        if (error) {
+          throw error
+        }
+
+        setFormData(prev => ({
+          ...prev,
+          success: 'Account created successfully! Please check your email to confirm your account.',
+          isLoading: false
+        }))
+        return
+      }
+
       await onSubmit(email, formData.password)
     } catch (err) {
       setFormData(prev => ({
@@ -53,7 +77,9 @@ export function AuthForm({ type, onSubmit }: AuthFormProps) {
         error: err instanceof Error ? err.message : 'An error occurred. Please try again.'
       }))
     } finally {
-      setFormData(prev => ({ ...prev, isLoading: false }))
+      if (isLogin) {
+        setFormData(prev => ({ ...prev, isLoading: false }))
+      }
     }
   }
 
@@ -104,6 +130,12 @@ export function AuthForm({ type, onSubmit }: AuthFormProps) {
         {formData.error && (
           <div className="text-red-500 text-sm text-center">
             {formData.error}
+          </div>
+        )}
+
+        {formData.success && (
+          <div className="text-green-500 text-sm text-center">
+            {formData.success}
           </div>
         )}
 
