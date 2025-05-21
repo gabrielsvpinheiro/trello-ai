@@ -4,6 +4,7 @@ import { TaskColumn } from "./TaskColumn";
 import { Task } from "@/types/task";
 import Loading from "../common/Loading";
 import { useTaskBoard } from "@/hooks/useTaskBoard";
+import { AITaskInput } from "../common/AITaskInput";
 
 export function TaskBoard() {
   const {
@@ -34,43 +35,50 @@ export function TaskBoard() {
     e.preventDefault();
   };
 
+  const handleAICreateTask = (title: string, content: string) => {
+    handleCreateTask(title, content);
+  };
+
   if (loading) {
     return <Loading />;
   }
 
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 w-full max-w-6xl">
-      <TaskColumn
-        title="Backlog"
-        tasks={backlog}
-        onDragOver={handleDragOver}
-        onDrop={handleDrop}
-        onDragStart={handleDragStart}
-        source="backlog"
-        handleDeleteTask={handleDeleteTask}
-        handleEditTask={handleEditTask}
-        onCreateTask={handleCreateTask}
-      />
-      <TaskColumn
-        title="In Progress"
-        tasks={inProgress}
-        onDragOver={handleDragOver}
-        onDrop={handleDrop}
-        onDragStart={handleDragStart}
-        source="inProgress"
-        handleDeleteTask={handleDeleteTask}
-        handleEditTask={handleEditTask}
-      />
-      <TaskColumn
-        title="Done"
-        tasks={done}
-        onDragOver={handleDragOver}
-        onDrop={handleDrop}
-        onDragStart={handleDragStart}
-        source="done"
-        handleDeleteTask={handleDeleteTask}
-        handleEditTask={handleEditTask}
-      />
+    <div className="flex flex-col items-center w-full max-w-6xl">
+      <AITaskInput onCreateTask={handleAICreateTask} />
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 w-full">
+        <TaskColumn
+          title="Backlog"
+          tasks={backlog}
+          onDragOver={handleDragOver}
+          onDrop={handleDrop}
+          onDragStart={handleDragStart}
+          source="backlog"
+          handleDeleteTask={handleDeleteTask}
+          handleEditTask={handleEditTask}
+          onCreateTask={handleCreateTask}
+        />
+        <TaskColumn
+          title="In Progress"
+          tasks={inProgress}
+          onDragOver={handleDragOver}
+          onDrop={handleDrop}
+          onDragStart={handleDragStart}
+          source="inProgress"
+          handleDeleteTask={handleDeleteTask}
+          handleEditTask={handleEditTask}
+        />
+        <TaskColumn
+          title="Done"
+          tasks={done}
+          onDragOver={handleDragOver}
+          onDrop={handleDrop}
+          onDragStart={handleDragStart}
+          source="done"
+          handleDeleteTask={handleDeleteTask}
+          handleEditTask={handleEditTask}
+        />
+      </div>
     </div>
   );
 }
