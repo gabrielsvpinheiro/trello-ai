@@ -8,6 +8,8 @@ A Trello-style task management application built with **Next.js**, **Supabase**,
 
 **Trello AI** is a Kanban task manager where users can create, move (via drag and drop), and delete their own tasks. It integrates authentication with Supabase to ensure each user sees only their own data, with real-time persistence.
 
+In addition, the AI integration allows users to input a goal or general task description, and the system will automatically generate step-by-step tasks using smart suggestions and automations — making productivity planning easier and more efficient.
+
 ---
 
 ## 🚀 Technologies Used
@@ -16,6 +18,7 @@ A Trello-style task management application built with **Next.js**, **Supabase**,
 * [React](https://react.dev/)
 * [Supabase](https://supabase.com/)
 * [Tailwind CSS](https://tailwindcss.com/)
+* [Open AI API](https://openai.com/api/)
 
 ---
 
@@ -89,7 +92,7 @@ NEXT_PUBLIC_SUPABASE_ANON_KEY=<your-anon-key>
 OPENAI_API_KEY=<your-openai-api-key>
 ```
 
-You can find these values in the Supabase dashboard under **Project Settings > API**.
+You can find these values in the Supabase dashboard under **Project Settings > API**.  
 For the OpenAI API key, you can get it from [OpenAI Platform](https://platform.openai.com/api-keys).
 
 ---
@@ -112,15 +115,15 @@ The project uses Supabase authentication. Each user has access only to their own
 
 ## 📝 Features
 
-* ✅ User login and registration
-* 📝 Task creation
-* 🔄 Move tasks between columns using drag and drop
-* ✏️ Edit task
-* ❌ Task deletion
-* 🔐 Each user only sees their own tasks
-* 📱 Responsive and modern interface
-* 🤖 AI integration
-* 📱 Mobile app support
+* ✅ User login and registration  
+* 📝 Task creation  
+* 🔄 Move tasks between columns using drag and drop  
+* ✏️ Edit task  
+* ❌ Task deletion  
+* 🔐 Each user only sees their own tasks  
+* 📱 Responsive and modern interface  
+* 🤖 **AI integration** – Input a goal and receive step-by-step tasks automatically  
+* 📱 Mobile app support  
 
 ---
 
