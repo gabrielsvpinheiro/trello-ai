@@ -24,7 +24,7 @@ A Trello-style task management application built with **Next.js**, **Supabase**,
 ### 1. Clone the repository
 
 ```bash
-git clone https://github.com/your-username/trello-ai.git
+git clone https://github.com/gabrielsvpinheiro/trello-ai.git
 cd trello-ai
 ```
 
