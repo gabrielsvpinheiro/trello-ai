@@ -42,7 +42,7 @@ export async function POST(request: Request) {
   } catch (error) {
     console.error('Error generating tasks:', error);
     return NextResponse.json(
-      { error: 'Failed to generate tasks', details: error instanceof Error ? error.message : 'Unknown error' },
+      { error: 'Failed to generate tasks. Please try again later.', details: error instanceof Error ? error.message : 'Unknown error' },
       { status: 500 }
     );
   }
