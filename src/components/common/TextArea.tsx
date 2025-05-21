@@ -1,30 +1,30 @@
 'use client';
 
-interface TextInputProps {
+interface TextAreaProps {
   id: string;
   name: string;
-  type: string;
   value?: string;
-  onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  onChange?: (e: React.ChangeEvent<HTMLTextAreaElement>) => void;
   placeholder?: string;
   required?: boolean;
   className?: string;
   label?: string;
+  rows?: number;
   disabled?: boolean;
 }
 
-export function TextInput({
+export function TextArea({
   id,
   name,
-  type,
   value,
   onChange,
   placeholder,
   required = false,
   className = '',
   label,
+  rows = 2,
   disabled = false,
-}: TextInputProps) {
+}: TextAreaProps) {
   return (
     <div>
       {label && (
@@ -32,17 +32,17 @@ export function TextInput({
           {label}
         </label>
       )}
-      <input
+      <textarea
         id={id}
         name={name}
-        type={type}
         value={value}
         onChange={onChange}
         placeholder={placeholder}
         required={required}
+        rows={rows}
         disabled={disabled}
         className={`appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-600 placeholder-gray-500 text-gray-300 focus:outline-none focus:ring-gray-200 focus:border-gray-300 focus:z-10 sm:text-sm ${className}`}
       />
     </div>
   );
-}
+} 

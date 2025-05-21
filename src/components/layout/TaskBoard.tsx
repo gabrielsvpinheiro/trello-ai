@@ -14,6 +14,7 @@ export function TaskBoard() {
     updateTaskStatus,
     handleDeleteTask,
     handleCreateTask,
+    handleEditTask,
   } = useTaskBoard();
 
   const handleDragStart = (e: React.DragEvent<HTMLDivElement>, task: Task, source: string) => {
@@ -47,6 +48,7 @@ export function TaskBoard() {
         onDragStart={handleDragStart}
         source="backlog"
         handleDeleteTask={handleDeleteTask}
+        handleEditTask={handleEditTask}
         onCreateTask={handleCreateTask}
       />
       <TaskColumn
@@ -57,6 +59,7 @@ export function TaskBoard() {
         onDragStart={handleDragStart}
         source="inProgress"
         handleDeleteTask={handleDeleteTask}
+        handleEditTask={handleEditTask}
       />
       <TaskColumn
         title="Done"
@@ -66,6 +69,7 @@ export function TaskBoard() {
         onDragStart={handleDragStart}
         source="done"
         handleDeleteTask={handleDeleteTask}
+        handleEditTask={handleEditTask}
       />
     </div>
   );

@@ -77,6 +77,24 @@ export function useTaskBoard() {
     }
   };
 
+  const handleEditTask = async (taskId: number, title: string, content: string) => {
+    const { data, error } = await supabase
+      .from('tasks')
+      .update({ title, content })
+      .eq('id', taskId)
+      .select()
+      .single();
+
+    if (!error && data) {
+      const updateTaskInList = (list: Task[]) =>
+        list.map((task) => (task.id === taskId ? data : task));
+
+      setBacklog((prev) => updateTaskInList(prev));
+      setInProgress((prev) => updateTaskInList(prev));
+      setDone((prev) => updateTaskInList(prev));
+    }
+  };
+
   return {
     backlog,
     inProgress,
@@ -85,5 +103,6 @@ export function useTaskBoard() {
     updateTaskStatus,
     handleDeleteTask,
     handleCreateTask,
+    handleEditTask,
   };
 } 

@@ -3,6 +3,9 @@
 import { useState } from "react";
 import { Task } from "@/types/task";
 import { TaskCard } from './TaskCard';
+import { TextInput } from '../common/TextInput';
+import { TextArea } from '../common/TextArea';
+import { Button } from '../common/Button';
 
 interface TaskColumnProps {
   title: string;
@@ -12,6 +15,7 @@ interface TaskColumnProps {
   onDragStart: (e: React.DragEvent<HTMLDivElement>, task: Task, source: string) => void;
   source: string;
   handleDeleteTask: (taskId: number) => void;
+  handleEditTask: (taskId: number, title: string, content: string) => Promise<void>;
   onCreateTask?: (title: string, content: string) => Promise<void>;
 }
 
@@ -23,6 +27,7 @@ export function TaskColumn({
   onDragStart,
   source,
   handleDeleteTask,
+  handleEditTask,
   onCreateTask,
 }: TaskColumnProps) {
   const [showForm, setShowForm] = useState(false);
@@ -60,40 +65,45 @@ export function TaskColumn({
           </button>
         )}
       </div>
+      
       {showForm && source === "backlog" && onCreateTask && (
         <form onSubmit={handleSubmit} className="mb-4 flex flex-col gap-2">
-          <input
-            className="p-2 rounded bg-gray-700 text-white"
-            placeholder="Title"
+          <TextInput
+            id="new-title"
+            name="title"
+            type="text"
             value={newTitle}
-            onChange={e => setNewTitle(e.target.value)}
+            onChange={(e) => setNewTitle(e.target.value)}
+            placeholder="Title"
             required
+            className="rounded-t-md"
+            label="Title"
             disabled={creating}
           />
-          <textarea
-            className="p-2 rounded bg-gray-700 text-white"
-            placeholder="Content..."
+          <TextArea
+            id="new-content"
+            name="content"
             value={newContent}
-            onChange={e => setNewContent(e.target.value)}
-            rows={2}
+            onChange={(e) => setNewContent(e.target.value)}
+            placeholder="Write your thoughts here..."
+            className="rounded-b-md"
+            label="Content"
             disabled={creating}
           />
           <div className="flex gap-2">
-            <button
+            <Button
               type="submit"
-              className="bg-gray-500 text-white px-3 py-1 rounded hover:bg-gray-600 cursor-pointer"
+              text={creating ? "Saving..." : "Save"}
               disabled={creating}
-            >
-              {creating ? "Saving..." : "Save"}
-            </button>
-            <button
+              className="bg-gray-600 hover:bg-gray-900"
+            />
+            <Button
               type="button"
-              className="bg-gray-700 text-white px-3 py-1 rounded hover:bg-gray-900 cursor-pointer"
+              text="Cancel"
               onClick={() => setShowForm(false)}
               disabled={creating}
-            >
-              Cancel
-            </button>
+              className="bg-gray-600 hover:bg-gray-900"
+            />
           </div>
         </form>
       )}
@@ -104,6 +114,7 @@ export function TaskColumn({
           onDragStart={onDragStart}
           source={source}
           handleDeleteTask={handleDeleteTask}
+          handleEditTask={handleEditTask}
         />
       ))}
     </div>
