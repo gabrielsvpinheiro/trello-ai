@@ -6,7 +6,6 @@ import { Button } from '../common/Button'
 import { ConfirmPasswordInput } from './ConfirmPasswordInput'
 import { validateEmail, validatePassword } from '@/utils/validation'
 import { AUTH_TEXTS } from '@/utils/auth'
-import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
 
 interface AuthFormProps {
   type: 'login' | 'signup'
@@ -21,7 +20,6 @@ export function AuthForm({ type, onSubmit }: AuthFormProps) {
     success: '',
     isLoading: false
   })
-  const supabase = createClientComponentClient()
 
   const isLogin = type === 'login'
   const texts = AUTH_TEXTS[type]
@@ -50,20 +48,7 @@ export function AuthForm({ type, onSubmit }: AuthFormProps) {
       }
 
       if (!isLogin) {
-        const { error } = await supabase.auth.signUp({
-          email,
-          password: formData.password
-        })
-
-        if (error) {
-          throw error
-        }
-
-        setFormData(prev => ({
-          ...prev,
-          success: 'Account created successfully! You can now log in.',
-          isLoading: false
-        }))
+        await onSubmit(email, formData.password)
         return
       }
 
@@ -74,9 +59,7 @@ export function AuthForm({ type, onSubmit }: AuthFormProps) {
         error: err instanceof Error ? err.message : 'An error occurred. Please try again.'
       }))
     } finally {
-      if (isLogin) {
-        setFormData(prev => ({ ...prev, isLoading: false }))
-      }
+      setFormData(prev => ({ ...prev, isLoading: false }))
     }
   }
 
