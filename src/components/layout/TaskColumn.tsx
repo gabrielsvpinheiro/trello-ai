@@ -6,34 +6,42 @@ import { TaskCard } from './TaskCard';
 import { TextInput } from '../common/TextInput';
 import { TextArea } from '../common/TextArea';
 import { Button } from '../common/Button';
+import {
+  SortableContext,
+  verticalListSortingStrategy,
+} from '@dnd-kit/sortable';
+import { useDroppable } from '@dnd-kit/core';
 
 interface TaskColumnProps {
   title: string;
   tasks: Task[];
-  onDragOver: (e: React.DragEvent<HTMLDivElement>) => void;
-  onDrop: (e: React.DragEvent<HTMLDivElement>, target: string) => void;
-  onDragStart: (e: React.DragEvent<HTMLDivElement>, task: Task, source: string) => void;
   source: string;
-  handleDeleteTask: (taskId: number) => void;
+  handleDeleteTask: (taskId: number) => Promise<void>;
   handleEditTask: (taskId: number, title: string, content: string) => Promise<void>;
   onCreateTask?: (title: string, content: string) => Promise<void>;
+  isOver?: boolean;
 }
 
 export function TaskColumn({
   title,
   tasks,
-  onDragOver,
-  onDrop,
-  onDragStart,
   source,
   handleDeleteTask,
   handleEditTask,
   onCreateTask,
+  isOver = false,
 }: TaskColumnProps) {
   const [showForm, setShowForm] = useState(false);
   const [newTitle, setNewTitle] = useState("");
   const [newContent, setNewContent] = useState("");
   const [creating, setCreating] = useState(false);
+
+  const { setNodeRef } = useDroppable({
+    id: source,
+    data: {
+      type: source,
+    },
+  });
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -48,9 +56,10 @@ export function TaskColumn({
 
   return (
     <div
-      className="bg-gray-800 p-6 rounded-lg shadow-md"
-      onDragOver={onDragOver}
-      onDrop={(e) => onDrop(e, source)}
+      ref={setNodeRef}
+      className={`flex flex-col w-full h-full min-h-[500px] bg-gray-50 dark:bg-gray-800 rounded-lg p-4 transition-all duration-200 ${
+        isOver ? 'ring-2 ring-blue-500 bg-blue-50 dark:bg-blue-900/20' : ''
+      }`}
     >
       <div className="flex items-center justify-between pb-4">
         <h2 className="text-white text-lg font-semibold">{title}</h2>
@@ -66,7 +75,7 @@ export function TaskColumn({
         )}
       </div>
       
-      {showForm && source === "backlog" && onCreateTask && (
+      {showForm && (
         <form onSubmit={handleSubmit} className="mb-4 flex flex-col gap-2">
           <TextInput
             id="new-title"
@@ -107,16 +116,21 @@ export function TaskColumn({
           </div>
         </form>
       )}
-      {tasks.map((task) => (
-        <TaskCard
-          key={task.id}
-          task={task}
-          onDragStart={onDragStart}
-          source={source}
-          handleDeleteTask={handleDeleteTask}
-          handleEditTask={handleEditTask}
-        />
-      ))}
+      
+      <SortableContext
+        items={tasks.map(task => task.id)}
+        strategy={verticalListSortingStrategy}
+      >
+        {tasks.map((task) => (
+          <TaskCard
+            key={task.id}
+            task={task}
+            source={source}
+            handleDeleteTask={handleDeleteTask}
+            handleEditTask={handleEditTask}
+          />
+        ))}
+      </SortableContext>
     </div>
   );
 }

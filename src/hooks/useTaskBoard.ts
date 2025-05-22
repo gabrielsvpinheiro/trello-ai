@@ -19,7 +19,8 @@ export function useTaskBoard() {
       .from('tasks')
       .select('*')
       .eq('user_id', user.id)
-      .order('created_at', { ascending: true });
+      .order('status', { ascending: true })
+      .order('order', { ascending: true });
 
     if (error) {
       setLoading(false);
@@ -37,16 +38,28 @@ export function useTaskBoard() {
   }, [fetchTasks]);
 
   const updateTaskStatus = async (task: Task, newStatus: string) => {
+    const { data: maxOrderData } = await supabase
+      .from('tasks')
+      .select('order')
+      .eq('status', newStatus)
+      .order('order', { ascending: false })
+      .limit(1);
+
+    const newOrder = maxOrderData?.[0]?.order ?? -1;
+
     await supabase
       .from('tasks')
-      .update({ status: newStatus })
+      .update({ 
+        status: newStatus,
+        order: newOrder + 1
+      })
       .eq('id', task.id);
 
     setBacklog((prev) => prev.filter((t) => t.id !== task.id));
     setInProgress((prev) => prev.filter((t) => t.id !== task.id));
     setDone((prev) => prev.filter((t) => t.id !== task.id));
 
-    const updatedTask = { ...task, status: newStatus };
+    const updatedTask = { ...task, status: newStatus, order: newOrder + 1 };
     if (newStatus === "backlog") setBacklog((prev) => [...prev, updatedTask]);
     if (newStatus === "inProgress") setInProgress((prev) => [...prev, updatedTask]);
     if (newStatus === "done") setDone((prev) => [...prev, updatedTask]);
@@ -62,6 +75,16 @@ export function useTaskBoard() {
   const handleCreateTask = async (title: string, content: string) => {
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) return;
+
+    const { data: maxOrderData } = await supabase
+      .from('tasks')
+      .select('order')
+      .eq('status', 'backlog')
+      .order('order', { ascending: false })
+      .limit(1);
+
+    const newOrder = maxOrderData?.[0]?.order ?? -1;
+
     const { data, error } = await supabase
       .from('tasks')
       .insert({
@@ -69,6 +92,7 @@ export function useTaskBoard() {
         content,
         status: 'backlog',
         user_id: user.id,
+        order: newOrder + 1
       })
       .select()
       .single();
@@ -95,6 +119,29 @@ export function useTaskBoard() {
     }
   };
 
+  const handleReorderTasks = async (tasks: Task[], status: string) => {
+    if (status === "backlog") setBacklog(tasks);
+    if (status === "inProgress") setInProgress(tasks);
+    if (status === "done") setDone(tasks);
+
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) return;
+
+    const updates = tasks.map((task, index) => ({
+      id: task.id,
+      order: index,
+      status: status
+    }));
+
+    const { error } = await supabase
+      .from('tasks')
+      .upsert(updates, { onConflict: 'id' });
+
+    if (error) {
+      console.error('Error updating task order:', error);
+    }
+  };
+
   return {
     backlog,
     inProgress,
@@ -104,5 +151,6 @@ export function useTaskBoard() {
     handleDeleteTask,
     handleCreateTask,
     handleEditTask,
+    handleReorderTasks,
   };
 } 

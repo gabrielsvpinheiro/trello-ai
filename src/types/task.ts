@@ -3,4 +3,5 @@ export interface Task {
   title: string;
   content: string;
   status: string;
+  order: number;
 }
