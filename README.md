@@ -49,6 +49,7 @@ CREATE TABLE tasks (
   content TEXT,
   status TEXT NOT NULL DEFAULT 'backlog',
   user_id UUID REFERENCES auth.users(id),
+  order INTEGER NOT NULL DEFAULT 0,
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
   updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
