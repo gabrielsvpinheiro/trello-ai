@@ -37,7 +37,7 @@ export async function updateSession(request: NextRequest) {
     data: { user },
   } = await supabase.auth.getUser()
 
-  if (request.nextUrl.pathname.startsWith('/auth/callback') || request.nextUrl.pathname === '/signup') {
+  if (request.nextUrl.pathname === '/signup') {
     return supabaseResponse
   }
 

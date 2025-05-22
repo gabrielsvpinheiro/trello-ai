@@ -52,10 +52,7 @@ export function AuthForm({ type, onSubmit }: AuthFormProps) {
       if (!isLogin) {
         const { error } = await supabase.auth.signUp({
           email,
-          password: formData.password,
-          options: {
-            emailRedirectTo: `${window.location.origin}/auth/callback`
-          }
+          password: formData.password
         })
 
         if (error) {
@@ -64,7 +61,7 @@ export function AuthForm({ type, onSubmit }: AuthFormProps) {
 
         setFormData(prev => ({
           ...prev,
-          success: 'Account created successfully! Please check your email to confirm your account.',
+          success: 'Account created successfully! You can now log in.',
           isLoading: false
         }))
         return

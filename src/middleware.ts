@@ -14,9 +14,8 @@ export const config = {
      * - favicon.ico (favicon file)
      * - login (login page)
      * - signup (signup page)
-     * - auth/callback (auth callback)
      * Feel free to modify this pattern to include more paths.
      */
-    '/((?!_next/static|_next/image|favicon.ico|login|signup|auth/callback|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)',
+    '/((?!_next/static|_next/image|favicon.ico|login|signup|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)',
   ],
 }
