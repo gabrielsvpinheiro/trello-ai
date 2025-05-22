@@ -16,7 +16,7 @@ export function ConfirmPasswordInput({ value, onChange }: ConfirmPasswordInputPr
         onChange={(e) => onChange(e.target.value)}
         placeholder="Confirm Password"
         required
-        className="rounded-md"
+        className="rounded-b-md rounded-t-md" 
         label="Confirm Password"
       />
     </div>

@@ -91,7 +91,7 @@ export function AuthForm({ type, onSubmit }: AuthFormProps) {
           </a>
         </p>
       </div>
-      <form className="mt-8 space-y-6 p-8 rounded-lg shadow" onSubmit={handleSubmit}>
+      <form className="mt-8 space-y-6 p-8 rounded-lg" onSubmit={handleSubmit}>
         <div className="rounded-md shadow-sm -space-y-px">
           <TextInput
             id="email"
