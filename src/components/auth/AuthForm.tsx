@@ -9,7 +9,7 @@ import { AUTH_TEXTS } from '@/utils/auth'
 
 interface AuthFormProps {
   type: 'login' | 'signup'
-  onSubmit: (email: string, password: string) => Promise<void>
+  onSubmit: (email: string, password: string) => Promise<{ success: boolean; error?: string } | void>
 }
 
 export function AuthForm({ type, onSubmit }: AuthFormProps) {
@@ -48,11 +48,27 @@ export function AuthForm({ type, onSubmit }: AuthFormProps) {
       }
 
       if (!isLogin) {
-        await onSubmit(email, formData.password)
+        const result = await onSubmit(email, formData.password)
+        
+        if (result && !result.success) {
+          setFormData(prev => ({
+            ...prev,
+            error: result.error || 'An error occurred. Please try again.'
+          }))
+          return
+        }
         return
       }
 
-      await onSubmit(email, formData.password)
+      const result = await onSubmit(email, formData.password)
+      
+      if (result && !result.success) {
+        setFormData(prev => ({
+          ...prev,
+          error: result.error || 'An error occurred. Please try again.'
+        }))
+        return
+      }
     } catch (err) {
       setFormData(prev => ({
         ...prev,
